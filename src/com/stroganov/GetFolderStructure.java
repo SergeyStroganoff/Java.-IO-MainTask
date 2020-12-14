@@ -1,38 +1,33 @@
 package com.stroganov;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class GetFolderStructure {
 
-   static int  counter = 0;
+    static int counter = 0;
 
-    Map<File, Boolean> fileMap = new HashMap<>();
+    public static void readAllSubFiles(File baseDirectory, MyFileWriter writer) {
 
-    public static   Map<File, Boolean> readAllSubFiles(File baseDirectory) {
-        Map<File, Boolean> fileMap = new HashMap<>();
+        writer.writeFileStructure(baseDirectory, counter);
+        if (baseDirectory.isDirectory()) {
 
-        Writer.WriteFileStructure2(baseDirectory.toString(),counter);
-        if (baseDirectory.isDirectory() && !(baseDirectory==null)) {
-            for (File file : baseDirectory.listFiles()) {
+            ArrayList<File> fileList = new ArrayList<>(Arrays.asList(baseDirectory.listFiles()));
+            Collections.sort(fileList, new FileDirectoryComparator());
+
+            for (File file : fileList) {
                 if (file.isFile()) {
-                    Writer.WriteFileStructure2(baseDirectory.toString(),counter);
-                    fileMap.put(file, true);
+                    writer.writeFileStructure(file, counter);
                 } else {
                     counter++;
-                    fileMap.put(file, false);
-                    readAllSubFiles(file);
+                    readAllSubFiles(file, writer);
                 }
             }
+            counter--;
         }
-        return fileMap;
+
     }
-
-
-
-
 
 }
